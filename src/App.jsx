@@ -6,12 +6,21 @@ import { Basket } from './components/Basket';
 function App() {
     const [basket, setBasket] = useState([]);
     const [products, setProducts] = useState([]);
+    const [totalValue, setTotalValue] = useState(0);
 
     useEffect(() => {
         fetch('http://localhost:3000/products')
             .then(response => response.json())
             .then(data => setProducts(data));
-    }, []);    
+    }, []);
+
+    useEffect(() => {
+        const calculateTotal = () => {
+            return basket.reduce((total, item) => total += item.price * item.count, 0);
+        };
+
+        setTotalValue(calculateTotal());
+    }, [basket]);
 
     const moveToCart = id => {
         let found = products.find(x => x.id === id);
@@ -47,12 +56,6 @@ function App() {
     const removeItem = id => {
         setBasket(prevBasket => prevBasket.filter(item => item.id !== id));
     };
-
-    const calculateTotal = () => {
-        return basket.reduce((total, item) => total += item.price * item.count, 0);
-    };
-
-    const totalValue = calculateTotal();
 
     return (
         <>
